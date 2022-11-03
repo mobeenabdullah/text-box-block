@@ -1,10 +1,8 @@
-import { __ } from '@wordpress/i18n';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, RichText } from '@wordpress/block-editor';
 
-export default function save() {
+export default function save({ attributes }) {
+	const { text } = attributes;
 	return (
-		<p {...useBlockProps.save()}>
-			{__('Text Box – hello from the saved content!', 'text-box')}
-		</p>
+		<RichText.Content {...useBlockProps.save()} tagName="h4" value={text} />
 	);
 }
