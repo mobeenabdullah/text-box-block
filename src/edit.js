@@ -5,70 +5,52 @@ import {
 	BlockControls,
 	InspectorControls,
 	AlignmentToolbar,
+	PanelColorSettings,
+	ContrastChecker,
 } from '@wordpress/block-editor';
-import {
-	PanelBody,
-	TextControl,
-	TextareaControl,
-	ToggleControl,
-	AnglePickerControl,
-	ColorPicker,
-	ColorPalette,
-} from '@wordpress/components';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes }) {
-	const { text, alignment } = attributes;
+	const { text, alignment, backgroundColor, textColor } = attributes;
 	const onChangeText = (newText) => {
 		setAttributes({ text: newText });
 	};
 	const onChangeAlignment = (newAlignment) => {
 		setAttributes({ alignment: newAlignment });
 	};
+	const onChangeBackgroundColor = (newBackgroundColor) => {
+		setAttributes({ backgroundColor: newBackgroundColor });
+	};
+	const onChangeTextColor = (newTextColor) => {
+		setAttributes({ textColor: newTextColor });
+	};
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody
+				<PanelColorSettings
 					title={__('Color Settings', 'text-box')}
 					icon="admin-appearance"
 					initialOpen
+					disableCustomColors={false}
+					colorSettings={[
+						{
+							value: backgroundColor,
+							onChange: onChangeBackgroundColor,
+							label: __('Background Color', 'text-box'),
+						},
+						{
+							value: textColor,
+							onChange: onChangeTextColor,
+							label: __('Text Color', 'text-box'),
+						},
+					]}
 				>
-					<TextControl
-						label="Input Label"
-						value={text}
-						onChange={onChangeText}
-						help="help text"
+					<ContrastChecker
+						textColor={text}
+						backgroundColor={backgroundColor}
 					/>
-					<TextareaControl
-						label="Input Label"
-						value={text}
-						onChange={onChangeText}
-						help="help text"
-					/>
-					<ToggleControl
-						label="Toggle Label"
-						checked={true}
-						onChange={(v) => console.log(v)} // eslint-disable-line no-console
-					/>
-					<AnglePickerControl
-						label="Angle Picker Label"
-						value={0}
-						onChange={(v) => console.log(v)} // eslint-disable-line no-console
-					/>
-					<ColorPicker
-						color="#f00"
-						onChangeComplete={(c) => console.log(c)} // eslint-disable-line no-console
-					/>
-					<ColorPalette
-						colors={[
-							{ name: 'red', color: '#f00' },
-							{ name: 'white', color: '#fff' },
-							{ name: 'blue', color: '#00f' },
-						]}
-						onChange={(c) => console.log(c)} // eslint-disable-line no-console
-					/>
-				</PanelBody>
+				</PanelColorSettings>
 			</InspectorControls>
 			<BlockControls group="inline">
 				<AlignmentToolbar
@@ -81,6 +63,10 @@ export default function Edit({ attributes, setAttributes }) {
 				value={text}
 				{...useBlockProps({
 					className: `text-box-align-${alignment}`,
+					style: {
+						backgroundColor,
+						color: textColor,
+					},
 				})}
 				placeholder={__('Your Text', 'text-block')}
 				tagName="h4"
