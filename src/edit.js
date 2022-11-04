@@ -7,22 +7,26 @@ import {
 	AlignmentToolbar,
 	PanelColorSettings,
 	ContrastChecker,
+	withColors,
 } from '@wordpress/block-editor';
 import './editor.scss';
 
-export default function Edit({ attributes, setAttributes }) {
-	const { text, alignment, backgroundColor, textColor } = attributes;
+function Edit(props) {
+	const {
+		attributes,
+		setAttributes,
+		backgroundColor,
+		textColor,
+		setBackgroundColor,
+		setTextColor,
+	} = props;
+	const { text, alignment } = attributes;
+
 	const onChangeText = (newText) => {
 		setAttributes({ text: newText });
 	};
 	const onChangeAlignment = (newAlignment) => {
 		setAttributes({ alignment: newAlignment });
-	};
-	const onChangeBackgroundColor = (newBackgroundColor) => {
-		setAttributes({ backgroundColor: newBackgroundColor });
-	};
-	const onChangeTextColor = (newTextColor) => {
-		setAttributes({ textColor: newTextColor });
 	};
 
 	return (
@@ -35,20 +39,20 @@ export default function Edit({ attributes, setAttributes }) {
 					disableCustomColors={false}
 					colorSettings={[
 						{
-							value: backgroundColor,
-							onChange: onChangeBackgroundColor,
+							value: backgroundColor.color,
+							onChange: setBackgroundColor,
 							label: __('Background Color', 'text-box'),
 						},
 						{
-							value: textColor,
-							onChange: onChangeTextColor,
+							value: textColor.color,
+							onChange: setTextColor,
 							label: __('Text Color', 'text-box'),
 						},
 					]}
 				>
 					<ContrastChecker
-						textColor={text}
-						backgroundColor={backgroundColor}
+						textColor={text.color}
+						backgroundColor={backgroundColor.color}
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
@@ -64,8 +68,8 @@ export default function Edit({ attributes, setAttributes }) {
 				{...useBlockProps({
 					className: `text-box-align-${alignment}`,
 					style: {
-						backgroundColor,
-						color: textColor,
+						backgroundColor: backgroundColor.color,
+						color: textColor.color,
 					},
 				})}
 				placeholder={__('Your Text', 'text-block')}
@@ -75,3 +79,8 @@ export default function Edit({ attributes, setAttributes }) {
 		</>
 	);
 }
+
+export default withColors({
+	backgroundColor: 'background-color',
+	textColor: 'color',
+})(Edit);
